@@ -100,12 +100,7 @@ function build(geojson) {
 
   // Dragging the slider hands control back to the cumulative view, clearing
   // any isolated legend band.
-  slider.addEventListener("input", () => {
-    activeBand = null;
-    updateLegendHighlight();
-    updateStatusText();
-    refresh();
-  });
+  slider.addEventListener("input", () => setActiveBand(null));
   playBtn.addEventListener("click", togglePlay);
 }
 
@@ -180,7 +175,7 @@ function togglePlay() {
   }
   // Play animates the cumulative timeline, so drop any isolated legend band.
   activeBand = null;
-  updateLegendHighlight();
+  updateLegendUI();
   // Starting a run from the end means "replay": rewind to the earliest decade
   // first. (This only happens on an explicit press — playback never restarts
   // itself; when it reaches the newest decade it simply stops.)
@@ -215,13 +210,27 @@ function stopPlay() {
   playBtn.textContent = "▶";
 }
 
-// --- Legend: a clickable swatch per time-period band. ---
-// Keep each band's row element so we can highlight the active one.
-const legendRows = [];
+// --- Legend: a filter with a swatch per time-period band, plus "All periods".
+//     On desktop it's the clickable list; on narrow screens the same choices
+//     appear as a dropdown (#legend-select). Both drive the same state. ---
+const legendRows = []; // { band, row } for each period band
+let allRow = null; // the "All periods" reset row
+let legendSelect = null; // the mobile <select>
 
 function buildLegend() {
   const el = document.getElementById("legend");
   el.innerHTML = '<div class="legend-title">Period built</div>';
+
+  // "All periods" clears the filter (and shows as selected when nothing is
+  // isolated). Its swatch previews the whole color ramp.
+  allRow = document.createElement("div");
+  allRow.className = "legend-row";
+  allRow.innerHTML = '<span class="swatch swatch-all"></span>All periods';
+  allRow.addEventListener("click", () => {
+    stopPlay();
+    setActiveBand(null);
+  });
+  el.appendChild(allRow);
 
   LEGEND_BANDS.forEach((band) => {
     const row = document.createElement("div");
@@ -229,7 +238,7 @@ function buildLegend() {
     row.innerHTML =
       `<span class="swatch" style="background:${colorForDecade(band.decade)}"></span>` +
       band.label;
-    row.addEventListener("click", () => selectBand(band));
+    row.addEventListener("click", () => toggleBand(band));
     el.appendChild(row);
     legendRows.push({ band, row });
   });
@@ -238,20 +247,46 @@ function buildLegend() {
   hint.className = "legend-hint";
   hint.textContent = "Click a period to isolate it";
   el.appendChild(hint);
+
+  buildLegendSelect();
+  updateLegendUI();
 }
 
-// Isolate a period — or clear it if that period is already isolated.
-function selectBand(band) {
+// The narrow-screen equivalent of the list: one dropdown with the same options.
+function buildLegendSelect() {
+  legendSelect = document.getElementById("legend-select");
+  legendSelect.innerHTML =
+    '<option value="">All periods</option>' +
+    LEGEND_BANDS.map((band, i) => `<option value="${i}">${band.label}</option>`).join("");
+  legendSelect.addEventListener("change", () => {
+    stopPlay();
+    const value = legendSelect.value;
+    setActiveBand(value === "" ? null : LEGEND_BANDS[Number(value)]);
+  });
+}
+
+// Clicking a band in the list isolates it — or clears it if already isolated.
+function toggleBand(band) {
   stopPlay(); // isolating isn't a cumulative animation
-  activeBand = activeBand === band ? null : band;
-  updateLegendHighlight();
+  setActiveBand(activeBand === band ? null : band);
+}
+
+// The single place that changes the filter and re-syncs every control.
+function setActiveBand(band) {
+  activeBand = band;
+  updateLegendUI();
   updateStatusText();
   refresh();
 }
 
-// Mark whichever band (if any) is currently isolated.
-function updateLegendHighlight() {
+// Keep both legend UIs in step with the current filter: highlight the active
+// list row (or "All periods"), and match the dropdown's selection.
+function updateLegendUI() {
   legendRows.forEach(({ band, row }) => {
     row.classList.toggle("active", band === activeBand);
   });
+  if (allRow) allRow.classList.toggle("active", activeBand === null);
+  if (legendSelect) {
+    legendSelect.value = activeBand ? String(LEGEND_BANDS.indexOf(activeBand)) : "";
+  }
 }

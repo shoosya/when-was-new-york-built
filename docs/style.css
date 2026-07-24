@@ -179,11 +179,53 @@ a {
   display: inline-block;
   border: 1px solid rgba(0, 0, 0, 0.15);
 }
+/* The "All periods" swatch previews the whole dark-red -> yellow ramp. */
+.swatch-all {
+  background: linear-gradient(
+    to right,
+    rgb(128, 0, 38),
+    rgb(240, 124, 30),
+    rgb(255, 229, 0)
+  );
+}
+
+/* Mobile period-filter dropdown. Hidden on desktop (the list is shown instead);
+   the mobile media query below swaps them. */
+.legend-select {
+  display: none;
+  position: fixed;
+  right: 12px;
+  bottom: 16px;
+  z-index: 1000;
+  max-width: 60vw;
+  padding: 9px 12px;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
 
 /* Small muted label inside map popups (e.g. "Zoning:"). Popups always sit on a
    white background, so this uses a fixed gray rather than the theme variable. */
 .popup-label {
   color: #666;
+}
+
+/* --- Narrow screens: the slider/play controls don't fit well, and the full
+   legend list covers too much map, so hide the player and swap the legend
+   list for a compact dropdown. Desktop is unchanged. --- */
+@media (max-width: 640px) {
+  .controls {
+    display: none;
+  }
+  .legend {
+    display: none;
+  }
+  .legend-select {
+    display: block;
+  }
 }
 
 /* --- Dark mode: tint the UI chrome so it isn't blinding at night. --- */

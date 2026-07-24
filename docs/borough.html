@@ -26,8 +26,15 @@
       <div id="status" class="slider-label">Showing all buildings</div>
     </div>
 
-    <!-- Color legend -->
+    <!-- Color legend + period filter (list on desktop) -->
     <div id="legend" class="legend"></div>
+
+    <!-- Same period filter as a dropdown, shown only on narrow screens -->
+    <select
+      id="legend-select"
+      class="legend-select"
+      aria-label="Filter buildings by time period"
+    ></select>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="colors.js"></script>
