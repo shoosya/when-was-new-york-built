@@ -62,17 +62,20 @@ The site is just static files. Serve the `docs/` folder and open it in a browser
 
 ## Refresh the data
 
-PLUTO only updates a few times a year, so this is occasional. To rebuild everything:
+PLUTO only updates a few times a year, so this is occasional. One command
+pulls + cleans every borough and re-exports the GeoJSON:
 
 ```bash
-# 1. Pull + clean each borough (MN, BX, BK, QN, SI)
-for b in MN BX BK QN SI; do .venv/bin/python data-prep/fetch_pluto.py --borough $b; done
+.venv/bin/python data-prep/refresh.py
+# add --outlines to also refresh the borough outlines (rarely needed)
+```
 
-# 2. Export all boroughs to GeoJSON
-.venv/bin/python data-prep/export_geojson.py
+That's just a wrapper around the individual scripts, which you can still run
+one at a time if you only need one borough:
 
-# 3. (Rarely needed) refresh the borough outlines
-.venv/bin/python data-prep/fetch_boroughs.py
+```bash
+.venv/bin/python data-prep/fetch_pluto.py --borough MN   # pull + clean one borough
+.venv/bin/python data-prep/export_geojson.py             # CSV -> GeoJSON
 ```
 
 ## Deploy to GitHub Pages
