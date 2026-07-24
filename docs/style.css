@@ -1,0 +1,212 @@
+/* Shared styles for both the landing map and the borough detail map. */
+
+:root {
+  --ink: #1a1a1a;
+  --muted: #666;
+  --panel: #ffffff;
+  --border: #e2e2e2;
+  --accent: #d7301f;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  color: var(--ink);
+  background: #fff;
+}
+
+a {
+  color: var(--accent);
+}
+
+/* --- Header --- */
+.site-header {
+  padding: 14px 20px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+.site-header h1 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+.site-header p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.detail-header h1 {
+  font-size: 1.2rem;
+}
+.back {
+  text-decoration: none;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+.count {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+/* --- Map --- */
+.map {
+  flex: 1;
+  width: 100%;
+}
+/* borough shapes on the landing page invite a click */
+.map path.leaflet-interactive {
+  cursor: pointer;
+}
+/* Clicking a shape gives it focus; browsers draw a rectangular outline around
+   the SVG's bounding box (the brief "blue square"). Suppress it. */
+.leaflet-interactive:focus {
+  outline: none;
+}
+
+/* --- Footer --- */
+.site-footer {
+  padding: 8px 20px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+}
+
+/* --- Rewind controls (floating over the map) --- */
+.controls {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  z-index: 1000;
+  max-width: 90vw;
+}
+.slider {
+  width: min(320px, 50vw);
+}
+.slider-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.slider-label strong {
+  color: var(--ink);
+}
+.play {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 0.8rem;
+  line-height: 1;
+}
+.play:hover {
+  background: #f4f4f4;
+}
+
+/* --- Legend --- */
+.legend {
+  position: fixed;
+  right: 16px;
+  bottom: 24px;
+  padding: 10px 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  font-size: 0.8rem;
+  z-index: 1000;
+}
+.legend-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 1px -4px;
+  padding: 3px 6px;
+  border-radius: 5px;
+  cursor: pointer;
+  user-select: none;
+}
+.legend-row:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+.legend-row.active {
+  background: rgba(215, 48, 31, 0.16);
+  font-weight: 600;
+}
+.legend-hint {
+  margin-top: 6px;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+.swatch {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  border-radius: 3px;
+  display: inline-block;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+/* Small muted label inside map popups (e.g. "Zoning:"). Popups always sit on a
+   white background, so this uses a fixed gray rather than the theme variable. */
+.popup-label {
+  color: #666;
+}
+
+/* --- Dark mode: tint the UI chrome so it isn't blinding at night. --- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #f0f0f0;
+    --muted: #a0a0a0;
+    --panel: #1e1e1e;
+    --border: #333;
+  }
+  body {
+    background: #121212;
+  }
+  .play {
+    background: #2a2a2a;
+  }
+  .play:hover {
+    background: #3a3a3a;
+  }
+  .legend-row:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .legend-row.active {
+    background: rgba(215, 48, 31, 0.28);
+  }
+}

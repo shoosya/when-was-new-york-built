@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NYC Building Ages</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="site-header detail-header">
+      <a class="back" href="index.html">← All boroughs</a>
+      <h1 id="borough-title">Loading…</h1>
+      <span id="count" class="count"></span>
+    </header>
+
+    <div id="map" class="map"></div>
+
+    <!-- Decade "rewind" control -->
+    <div class="controls">
+      <button id="play" class="play" type="button" aria-label="Play through the decades">▶</button>
+      <input id="slider" class="slider" type="range" step="10" />
+      <div id="status" class="slider-label">Showing all buildings</div>
+    </div>
+
+    <!-- Color legend -->
+    <div id="legend" class="legend"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="colors.js"></script>
+    <script src="zoning.js"></script>
+    <script src="borough.js"></script>
+  </body>
+</html>

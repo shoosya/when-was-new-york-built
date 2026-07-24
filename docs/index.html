@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NYC Building Ages — Explore by borough</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>When Was New York Built?</h1>
+      <p>Pick a borough to explore its buildings by the decade they went up.</p>
+    </header>
+
+    <div id="map" class="map"></div>
+
+    <footer class="site-footer">
+      Data:
+      <a
+        href="https://www.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page"
+        >NYC PLUTO</a
+      >
+      (26v1) · Built with Leaflet
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="overview.js"></script>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+# Python packages for the data-prep scripts (data-prep/*.py).
+# Install into a virtual environment:
+#   python3 -m venv .venv
+#   .venv/bin/pip install -r requirements.txt
+#
+# (pandas pulls in numpy automatically, so it isn't listed here.)
+requests==2.32.5
+pandas==2.3.3
+shapely==2.0.7

@@ -1,0 +1,11 @@
+# Python virtual environment (recreate with requirements.txt)
+.venv/
+__pycache__/
+*.pyc
+
+# Intermediate data pulled/cleaned by fetch_pluto.py. Large and regenerable;
+# the map only needs the exported GeoJSON in docs/data/, which IS committed.
+data-prep/output/
+
+# Machine-local Claude Code settings
+.claude/settings.local.json
