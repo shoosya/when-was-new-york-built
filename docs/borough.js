@@ -23,8 +23,10 @@ document.title = `NYC Building Ages — ${SLUGS[slug]}`;
 //     a DOM node per dot, which is what lets us show hundreds of thousands. ---
 const map = L.map("map", { preferCanvas: true });
 L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+  // This page has no footer (the map is full-bleed), so the favicon credit
+  // required by Flaticon's free license rides along in the map attribution.
   attribution:
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> · Map icon by <a href="https://www.flaticon.com/free-icons/map" title="map icons">Magnific - Flaticon</a>',
   subdomains: "abcd",
   maxZoom: 19,
 }).addTo(map);

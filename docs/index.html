@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NYC Building Ages — Explore by borough</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -19,12 +20,35 @@
     <div id="map" class="map"></div>
 
     <footer class="site-footer">
-      Data:
-      <a
-        href="https://www.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page"
-        >NYC PLUTO</a
-      >
-      (26v1) · Built with Leaflet
+      <span class="footer-credits">
+        Data:
+        <a
+          href="https://www.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page"
+          >NYC PLUTO</a
+        >
+        (26v1) · Built with Leaflet ·
+        <a href="https://www.flaticon.com/free-icons/map" title="map icons"
+          >Map icons created by Magnific - Flaticon</a
+        >
+      </span>
+
+      <!-- Buy Me a Coffee button. This script uses document.writeln(), so it
+           renders the button exactly where the tag sits and must stay a plain
+           synchronous script — adding async/defer, or injecting it after load,
+           would blow away the whole page. -->
+      <script
+        type="text/javascript"
+        src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js"
+        data-name="bmc-button"
+        data-slug="shoosya"
+        data-color="#FFDD00"
+        data-emoji=""
+        data-font="Cookie"
+        data-text="Buy me a coffee"
+        data-outline-color="#000000"
+        data-font-color="#000000"
+        data-coffee-color="#ffffff"
+      ></script>
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

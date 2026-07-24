@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NYC Building Ages</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -15,6 +16,29 @@
       <a class="back" href="index.html">← All boroughs</a>
       <h1 id="borough-title">Loading…</h1>
       <span id="count" class="count"></span>
+
+      <!-- Buy Me a Coffee button, floated over the map's top-right corner
+           (Leaflet's zoom control owns the top-left). It lives inside the
+           header so its CSS can anchor to the header's real height rather than
+           hard-coding one. The script uses document.writeln(), so it renders
+           the button exactly where this tag sits and must stay a plain
+           synchronous script — adding async/defer, or injecting it after load,
+           would blow away the whole page. -->
+      <div class="bmc-float">
+        <script
+          type="text/javascript"
+          src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js"
+          data-name="bmc-button"
+          data-slug="shoosya"
+          data-color="#FFDD00"
+          data-emoji=""
+          data-font="Cookie"
+          data-text="Buy me a coffee"
+          data-outline-color="#000000"
+          data-font-color="#000000"
+          data-coffee-color="#ffffff"
+        ></script>
+      </div>
     </header>
 
     <div id="map" class="map"></div>

@@ -48,6 +48,8 @@ a {
   display: flex;
   align-items: center;
   gap: 16px;
+  /* Containing block for .bmc-float, which hangs just below the header. */
+  position: relative;
 }
 .detail-header h1 {
   font-size: 1.2rem;
@@ -86,6 +88,56 @@ a {
   color: var(--muted);
   background: var(--panel);
   border-top: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 16px;
+}
+/* The credits need to stay one flex item — without this wrapper each <a> would
+   become its own item and the sentence would break apart. */
+.footer-credits {
+  min-width: 0;
+}
+
+/* --- Buy Me a Coffee button (footer on the landing page, floating over the map
+   on a borough page) ---
+   The BMC script injects its own <style> sizing the button at 210x60, which is
+   too heavy for a thin footer strip and too shouty as a map control. These
+   selectors are more specific than the injected `.bmc-btn` ones, so they win on
+   the cascade (the svg rule needs !important only because the injected one uses
+   it too). */
+.site-footer .bmc-btn-container,
+.bmc-float .bmc-btn-container {
+  line-height: 0;
+}
+.site-footer .bmc-btn,
+.bmc-float .bmc-btn {
+  min-width: 0;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 20px;
+}
+.site-footer .bmc-btn svg,
+.bmc-float .bmc-btn svg {
+  height: 20px !important;
+}
+
+/* Borough page: pin the button just below the header, at the map's top-right
+   (Leaflet's zoom control owns the top-left). The wrapper sits inside the
+   header, so `top: 100%` tracks the header's real height instead of hard-coding
+   an offset that would drift if the title ever wraps. */
+.bmc-float {
+  position: absolute;
+  top: 100%;
+  right: 16px;
+  margin-top: 12px;
+  z-index: 1000;
+}
+/* It floats over map tiles, so it needs the same lift as the other controls. */
+.bmc-float .bmc-btn {
+  box-shadow: var(--shadow);
 }
 
 /* --- Rewind controls (floating over the map) --- */

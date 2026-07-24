@@ -40,6 +40,7 @@ when-was-new-york-built/
     colors.js            # shared decade color scale + legend bands
     zoning.js            # plain-language labels for zoning codes
     style.css
+    favicon.svg
     data/                # exported GeoJSON (committed — the site needs it)
   requirements.txt
 ```
@@ -93,3 +94,10 @@ one at a time if you only need one borough:
 
 NYC PLUTO (Primary Land Use Tax Lot Output), NYC Dept. of City Planning —
 <https://www.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page>
+
+## Credits
+
+Favicon: <a href="https://www.flaticon.com/free-icons/map" title="map icons">Map
+icons created by Magnific - Flaticon</a>. The attribution Flaticon's free license
+requires is shown on the site itself — in the footer on `index.html`, and in the
+map's attribution control on `borough.html`.
