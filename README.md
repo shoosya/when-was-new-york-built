@@ -93,7 +93,7 @@ one at a time if you only need one borough:
 ## Data source
 
 NYC PLUTO (Primary Land Use Tax Lot Output), NYC Dept. of City Planning —
-<https://www.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page>
+<https://www.nyc.gov/content/planning/pages/resources?search=pluto#datasets>
 
 ## Credits
 
