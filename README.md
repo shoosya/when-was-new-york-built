@@ -3,7 +3,7 @@
 An interactive map of New York City showing **when each building was constructed**.
 Pick a borough, then explore its ~40k–310k tax lots colored by the decade they went
 up — with a "rewind" slider to watch the city grow and a clickable legend to isolate
-any time period.
+any time period (slider only available in desktop view).
 
 Built with Python (data prep) + Leaflet (map). It's a static site: the PLUTO data is
 fetched and exported to GeoJSON periodically, and the browser loads those files
