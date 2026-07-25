@@ -1,10 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NYC Building Ages</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+    <!-- Analytics -->
+    <script
+      defer
+      src="https://cloud.umami.is/script.js"
+      data-website-id="eb8b3ced-1390-46e0-b9a3-fbae9fa82bf5"
+    ></script>
 
     <!-- Link previews. borough.js sets the real title from ?borough=, but
          scrapers don't run JS, so these stay generic. og:url and canonical are
@@ -56,7 +63,14 @@
 
     <!-- Decade "rewind" control -->
     <div class="controls">
-      <button id="play" class="play" type="button" aria-label="Play through the decades">▶</button>
+      <button
+        id="play"
+        class="play"
+        type="button"
+        aria-label="Play through the decades"
+      >
+        ▶
+      </button>
       <input id="slider" class="slider" type="range" step="10" />
       <div id="status" class="slider-label">Showing all buildings</div>
     </div>
