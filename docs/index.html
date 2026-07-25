@@ -32,16 +32,25 @@
         >
       </span>
 
-      <!-- Plain link rather than Buy Me a Coffee's script widget: it keeps the
+      <!-- Author + coffee link travel together as one flex item, so they stay
+           side by side and wrap as a unit on narrow screens. The coffee link is
+           plain markup rather than Buy Me a Coffee's script widget: it keeps the
            footer a quiet strip, and avoids pulling in a third-party script that
            renders via document.writeln(). -->
-      <a
-        class="bmc-link"
-        href="https://buymeacoffee.com/shoosya"
-        target="_blank"
-        rel="noopener"
-        >Buy Me A Coffee ☕️</a
-      >
+      <span class="footer-author">
+        Created by
+        <a href="https://github.com/shoosya" target="_blank" rel="noopener"
+          >Natalie Kay</a
+        >
+        ·
+        <a
+          class="bmc-link"
+          href="https://buymeacoffee.com/shoosya"
+          target="_blank"
+          rel="noopener"
+          >Buy Me A Coffee ☕️</a
+        >
+      </span>
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

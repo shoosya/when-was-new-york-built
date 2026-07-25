@@ -98,6 +98,11 @@ a {
   min-width: 0;
 }
 
+/* Authorship + coffee link, kept as one flex item opposite the data credits. */
+.footer-author {
+  min-width: 0;
+}
+
 /* Buy Me A Coffee link in the footer. Deliberately quiet — it reads as part of
    the credits strip rather than a call to action. */
 .bmc-link {
