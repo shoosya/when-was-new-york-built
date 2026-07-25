@@ -5,6 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NYC Building Ages</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+    <!-- Link previews. borough.js sets the real title from ?borough=, but
+         scrapers don't run JS, so these stay generic. og:url and canonical are
+         deliberately omitted: hard-coding them here would collapse every
+         borough's link to one URL and drop the ?borough= a shared link needs. -->
+    <meta
+      name="description"
+      content="Explore a New York City borough building by building, colored by the decade each one went up."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="When Was New York Built?" />
+    <meta property="og:title" content="When Was New York Built?" />
+    <meta
+      property="og:description"
+      content="Explore a New York City borough building by building, colored by the decade each one went up."
+    />
+    <meta property="og:image" content="https://whenwasbuilt.nyc/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Silhouette of New York City's five boroughs beside a dark-red-to-yellow color scale running from before 1900 to the 2020s."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="When Was New York Built?" />
+    <meta
+      name="twitter:description"
+      content="Explore a New York City borough building by building, colored by the decade each one went up."
+    />
+    <meta
+      name="twitter:image"
+      content="https://whenwasbuilt.nyc/og-image.png"
+    />
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
