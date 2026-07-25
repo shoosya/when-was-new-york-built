@@ -98,6 +98,4 @@ NYC PLUTO (Primary Land Use Tax Lot Output), NYC Dept. of City Planning —
 ## Credits
 
 Favicon: <a href="https://www.flaticon.com/free-icons/map" title="map icons">Map
-icons created by Magnific - Flaticon</a>. The attribution Flaticon's free license
-requires is shown on the site itself — in the footer on `index.html`, and in the
-map's attribution control on `borough.html`.
+icons created by Magnific - Flaticon</a>.
