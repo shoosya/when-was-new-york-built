@@ -32,23 +32,16 @@
         >
       </span>
 
-      <!-- Buy Me a Coffee button. This script uses document.writeln(), so it
-           renders the button exactly where the tag sits and must stay a plain
-           synchronous script — adding async/defer, or injecting it after load,
-           would blow away the whole page. -->
-      <script
-        type="text/javascript"
-        src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js"
-        data-name="bmc-button"
-        data-slug="shoosya"
-        data-color="#FFDD00"
-        data-emoji=""
-        data-font="Cookie"
-        data-text="Buy me a coffee"
-        data-outline-color="#000000"
-        data-font-color="#000000"
-        data-coffee-color="#ffffff"
-      ></script>
+      <!-- Plain link rather than Buy Me a Coffee's script widget: it keeps the
+           footer a quiet strip, and avoids pulling in a third-party script that
+           renders via document.writeln(). -->
+      <a
+        class="bmc-link"
+        href="https://buymeacoffee.com/shoosya"
+        target="_blank"
+        rel="noopener"
+        >Buy Me A Coffee ☕️</a
+      >
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
