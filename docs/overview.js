@@ -12,7 +12,6 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
   maxZoom: 19,
 }).addTo(map);
 
-// How the borough shapes look normally vs. when hovered.
 const baseStyle = {
   color: "#b3123c",
   weight: 2,
@@ -29,10 +28,9 @@ fetch("data/boroughs.geojson")
       onEachFeature: (feature, shapeLayer) => {
         const { name, slug } = feature.properties;
 
-        // Name label follows the cursor over the shape.
+        // sticky: the label follows the cursor across the shape.
         shapeLayer.bindTooltip(name, { sticky: true, direction: "top" });
 
-        // Highlight on hover, then go to the detail page on click.
         shapeLayer.on("mouseover", () => shapeLayer.setStyle(hoverStyle));
         shapeLayer.on("mouseout", () => shapeLayer.setStyle(baseStyle));
         shapeLayer.on("click", () => {
@@ -41,7 +39,6 @@ fetch("data/boroughs.geojson")
       },
     }).addTo(map);
 
-    // Frame all five boroughs neatly.
     map.fitBounds(layer.getBounds(), { padding: [20, 20] });
   })
   .catch((err) => {

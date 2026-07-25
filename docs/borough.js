@@ -9,7 +9,6 @@ const SLUGS = {
   staten_island: "Staten Island",
 };
 
-// --- Which borough are we showing? Read it from the URL (?borough=queens). ---
 const params = new URLSearchParams(window.location.search);
 const slug = params.get("borough");
 if (!SLUGS[slug]) {
@@ -19,13 +18,11 @@ if (!SLUGS[slug]) {
 document.getElementById("borough-title").textContent = SLUGS[slug];
 document.title = `NYC Building Ages — ${SLUGS[slug]}`;
 
-// --- The map. preferCanvas draws the dots on one <canvas> instead of making
-//     a DOM node per dot, which is what lets us show hundreds of thousands. ---
+// preferCanvas draws the dots on one <canvas> instead of a DOM node per dot,
+// which is what lets us show hundreds of thousands.
 const map = L.map("map", { preferCanvas: true });
 L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-  // This page has no footer (the map is full-bleed), so the credits the landing
-  // page keeps in its footer ride along in the map attribution instead: the
-  // PLUTO data source, and the favicon credit Flaticon's license requires.
+  // This page has no footer, so the credits ride along in the attribution.
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> · Data: <a href="https://www.nyc.gov/content/planning/pages/resources?search=pluto#datasets">NYC PLUTO</a> (26v1) · Map icon by <a href="https://www.flaticon.com/free-icons/map" title="map icons">Magnific - Flaticon</a>',
   subdomains: "abcd",
@@ -49,7 +46,6 @@ const playBtn = document.getElementById("play");
 // `activeBand` holds the isolated band, or null when the slider is in charge.
 let activeBand = null;
 
-// --- Load this borough's data and build the map. ---
 fetch(`data/${slug}.geojson`)
   .then((response) => response.json())
   .then((geojson) => build(geojson))
@@ -78,7 +74,7 @@ function build(geojson) {
       opacity: 0,
       weight: 14,
     });
-    // Build the popup only when it's actually clicked (keeps setup fast).
+    // Built on click, not up front — keeps setup fast.
     marker.bindPopup(() => popupHtml(props));
 
     (decadeGroups[props.decade] ||= []).push(marker);
@@ -87,7 +83,6 @@ function build(geojson) {
 
   map.fitBounds(bounds, { padding: [20, 20] });
 
-  // Configure the slider from the decades we actually have data for.
   const decades = Object.keys(decadeGroups)
     .map(Number)
     .sort((a, b) => a - b);
@@ -101,14 +96,13 @@ function build(geojson) {
   updateStatusText();
   refresh(); // start with everything visible
 
-  // Dragging the slider hands control back to the cumulative view, clearing
-  // any isolated legend band.
+  // Dragging the slider hands control back to the cumulative view.
   slider.addEventListener("input", () => setActiveBand(null));
   playBtn.addEventListener("click", togglePlay);
 }
 
-// Decide whether a decade's dots should be visible right now: only its own
-// period when a legend band is isolated, otherwise everything up to the slider.
+// An isolated band shows only its own period; otherwise everything up to the
+// slider.
 function isDecadeVisible(decade) {
   if (activeBand) return decade >= activeBand.min && decade <= activeBand.max;
   return decade <= Number(slider.value);
@@ -119,10 +113,8 @@ function isDecadeVisible(decade) {
 function refresh() {
   let visible = 0;
 
-  // Iterate newest -> oldest so older decades are added last and therefore
-  // drawn *on top*. Where dots overlap (dense areas at low zoom), that lets a
-  // neighborhood's older buildings show through instead of being buried under
-  // newer ones — a more honest picture of when an area was built up.
+  // Newest -> oldest, so older decades are added last and draw *on top*. Where
+  // dots overlap, that shows an area's older buildings rather than burying them.
   Object.keys(decadeGroups)
     .map(Number)
     .sort((a, b) => b - a)
@@ -143,7 +135,6 @@ function refresh() {
   countEl.textContent = `${visible.toLocaleString()} buildings`;
 }
 
-// The line next to the slider, describing whichever filter is active.
 function updateStatusText() {
   if (activeBand) {
     statusEl.innerHTML = `Showing only <strong>${activeBand.label}</strong>`;
@@ -152,7 +143,6 @@ function updateStatusText() {
   }
 }
 
-// The popup shown when a dot is clicked.
 function popupHtml(p) {
   const addr = p.address || "Address unknown";
   const floors =
@@ -167,11 +157,10 @@ function popupHtml(p) {
   );
 }
 
-// --- Play button: step the slider forward through the decades automatically. ---
+// --- Play button: step the slider forward through the decades. ---
 let playTimer = null;
 
 function togglePlay() {
-  // Pressing the button while playing pauses it.
   if (playTimer) {
     stopPlay();
     return;
@@ -179,9 +168,8 @@ function togglePlay() {
   // Play animates the cumulative timeline, so drop any isolated legend band.
   activeBand = null;
   updateLegendUI();
-  // Starting a run from the end means "replay": rewind to the earliest decade
-  // first. (This only happens on an explicit press — playback never restarts
-  // itself; when it reaches the newest decade it simply stops.)
+  // Pressing play at the end means "replay" — rewind first. Only ever happens
+  // on an explicit press; playback stops at the newest decade, never loops.
   if (Number(slider.value) >= Number(slider.max)) {
     slider.value = slider.min;
   }
@@ -195,8 +183,7 @@ function step() {
   const next = Number(slider.value) + 10;
   const max = Number(slider.max);
 
-  // Reached (or passed) the newest decade: land exactly on it and stop.
-  // No looping back to the start.
+  // Land exactly on the newest decade rather than overshooting it.
   if (next >= max) {
     slider.value = max;
   } else {
@@ -213,9 +200,8 @@ function stopPlay() {
   playBtn.textContent = "▶";
 }
 
-// --- Legend: a filter with a swatch per time-period band, plus "All periods".
-//     On desktop it's the clickable list; on narrow screens the same choices
-//     appear as a dropdown (#legend-select). Both drive the same state. ---
+// --- Legend: a swatch per time-period band, plus "All periods". The clickable
+//     list on desktop and the dropdown on narrow screens drive the same state. ---
 const legendRows = []; // { band, row } for each period band
 let allRow = null; // the "All periods" reset row
 let legendSelect = null; // the mobile <select>
@@ -224,8 +210,7 @@ function buildLegend() {
   const el = document.getElementById("legend");
   el.innerHTML = '<div class="legend-title">Period built</div>';
 
-  // "All periods" clears the filter (and shows as selected when nothing is
-  // isolated). Its swatch previews the whole color ramp.
+  // "All periods" clears the filter; its swatch previews the whole ramp.
   allRow = document.createElement("div");
   allRow.className = "legend-row";
   allRow.innerHTML = '<span class="swatch swatch-all"></span>All periods';
@@ -255,7 +240,6 @@ function buildLegend() {
   updateLegendUI();
 }
 
-// The narrow-screen equivalent of the list: one dropdown with the same options.
 function buildLegendSelect() {
   legendSelect = document.getElementById("legend-select");
   legendSelect.innerHTML =
@@ -268,7 +252,6 @@ function buildLegendSelect() {
   });
 }
 
-// Clicking a band in the list isolates it — or clears it if already isolated.
 function toggleBand(band) {
   stopPlay(); // isolating isn't a cumulative animation
   setActiveBand(activeBand === band ? null : band);
@@ -282,8 +265,7 @@ function setActiveBand(band) {
   refresh();
 }
 
-// Keep both legend UIs in step with the current filter: highlight the active
-// list row (or "All periods"), and match the dropdown's selection.
+// Keep both legend UIs in step with the current filter.
 function updateLegendUI() {
   legendRows.forEach(({ band, row }) => {
     row.classList.toggle("active", band === activeBand);

@@ -73,8 +73,8 @@ a {
 .map path.leaflet-interactive {
   cursor: pointer;
 }
-/* Clicking a shape gives it focus; browsers draw a rectangular outline around
-   the SVG's bounding box (the brief "blue square"). Suppress it. */
+/* Clicking a shape focuses it, and browsers outline the SVG's bounding box —
+   the brief "blue square". */
 .leaflet-interactive:focus {
   outline: none;
 }
@@ -92,19 +92,14 @@ a {
   justify-content: space-between;
   gap: 6px 16px;
 }
-/* The credits need to stay one flex item — without this wrapper each <a> would
-   become its own item and the sentence would break apart. */
-.footer-credits {
-  min-width: 0;
-}
-
-/* Authorship + coffee link, kept as one flex item opposite the data credits. */
+/* Wrappers, not decoration: without them each <a> becomes its own flex item and
+   the two groups break apart. */
+.footer-credits,
 .footer-author {
   min-width: 0;
 }
 
-/* Buy Me A Coffee link in the footer. Deliberately quiet — it reads as part of
-   the credits strip rather than a call to action. */
+/* Quiet on purpose — reads as part of the credits, not a call to action. */
 .bmc-link {
   white-space: nowrap;
   text-decoration: none;
@@ -214,8 +209,7 @@ a {
   );
 }
 
-/* Mobile period-filter dropdown. Hidden on desktop (the list is shown instead);
-   the mobile media query below swaps them. */
+/* Mobile period-filter dropdown; the media query below swaps it for the list. */
 .legend-select {
   display: none;
   position: fixed;
@@ -238,9 +232,8 @@ a {
   color: #666;
 }
 
-/* --- Narrow screens: the slider/play controls don't fit well, and the full
-   legend list covers too much map, so hide the player and swap the legend
-   list for a compact dropdown. Desktop is unchanged. --- */
+/* --- Narrow screens: the player doesn't fit and the legend list covers too
+   much map, so hide both and swap in the dropdown. Desktop is unchanged. --- */
 @media (max-width: 640px) {
   .controls {
     display: none;
@@ -250,9 +243,7 @@ a {
   }
   .legend-select {
     display: block;
-    /* This page carries its credits (PLUTO, OpenStreetMap/CARTO, the icon
-       author) in the map's attribution bar, which wraps to two lines at phone
-       widths. Sit above it rather than covering them. */
+    /* Clear the attribution bar, which wraps to two lines at phone widths. */
     bottom: 44px;
   }
 }

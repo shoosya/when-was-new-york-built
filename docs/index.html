@@ -13,8 +13,7 @@
       data-website-id="eb8b3ced-1390-46e0-b9a3-fbae9fa82bf5"
     ></script>
 
-    <!-- Link previews in messengers and social apps. Scrapers don't run JS and
-         won't resolve relative paths, so every URL here is absolute. -->
+    <!-- Link previews. URLs are absolute — scrapers don't resolve relative ones. -->
     <meta
       name="description"
       content="An interactive map of New York City showing when each building was constructed — every lot colored by the decade it went up."
@@ -73,11 +72,7 @@
         >
       </span>
 
-      <!-- Author + coffee link travel together as one flex item, so they stay
-           side by side and wrap as a unit on narrow screens. The coffee link is
-           plain markup rather than Buy Me a Coffee's script widget: it keeps the
-           footer a quiet strip, and avoids pulling in a third-party script that
-           renders via document.writeln(). -->
+      <!-- One flex item so the two links stay side by side and wrap together. -->
       <span class="footer-author">
         Created by
         <a href="https://github.com/shoosya" target="_blank" rel="noopener"
