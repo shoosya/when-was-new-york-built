@@ -1,9 +1,9 @@
 /* Shared styles for both the landing map and the borough detail map. */
 
 :root {
-  --brand: #156eac;
+  --brand: #00668b;
   --brand-ink: #ffffff;
-  --brand-edge: #0f5787; /* a shade down, for borders on the blue */
+  --brand-edge: #003f6d; /* a shade down, for borders on the blue */
   --accent: #f6575e;
   --link: #10598a; /* the blue, darkened for 4.5:1 text contrast on white */
   --ink: #1a1a1a;
@@ -244,7 +244,7 @@ a {
   flex: none;
   border-radius: 3px;
   display: inline-block;
-  border: 1px solid rgba(0, 0, 0, 0.45);
+  border: 0;
 }
 
 .swatch-all {
@@ -304,4 +304,14 @@ a {
   clip: rect(0 0 0 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* The tile credits are required, but they don't need to read as a footer:
+   a small corner chip rather than a bar across the width. */
+.leaflet-control-attribution {
+  font-size: 11px;
+  line-height: 2;
+  padding: 2px 8px;
+  border-radius: 8px 0 0 0;
+  background: rgba(255, 255, 255, 0.82);
 }

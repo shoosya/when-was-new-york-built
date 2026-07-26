@@ -23,8 +23,10 @@ document.getElementById("borough-title").textContent = SLUGS[slug];
 document.title = `NYC Building Ages — ${SLUGS[slug]}`;
 
 const map = L.map("map");
+// Leaflet's own "Leaflet" prefix is optional; OSM and CARTO's credits are not.
+map.attributionControl.setPrefix(false);
 L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-  // This page has no footer, so the credits ride along in the attribution.
+  // No footer on this page, so credits ride along in the attribution chip.
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> · Data: <a href="https://www.nyc.gov/content/planning/pages/resources?search=pluto#datasets">NYC PLUTO</a> (26v1)',
   subdomains: "abcd",
