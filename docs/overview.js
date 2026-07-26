@@ -2,10 +2,9 @@
 
 const map = L.map("map").setView([40.7, -73.94], 10);
 
-// Muted basemap keeps the colored data readable; CARTO needs no API key.
 L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
   attribution:
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> · Data: <a href="https://www.nyc.gov/content/planning/pages/resources?search=pluto#datasets">NYC PLUTO</a> (26v1)',
   subdomains: "abcd",
   maxZoom: 19,
 }).addTo(map);
