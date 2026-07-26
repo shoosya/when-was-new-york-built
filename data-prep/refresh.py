@@ -2,11 +2,11 @@
 Refresh all the map data in one command.
 
 Runs the whole pipeline end to end: pull + clean every borough from PLUTO,
-then export the GeoJSON the site loads. This just calls the other scripts in
+then export the files the site loads. This just calls the other scripts in
 order, so it's the same work as running them by hand — only automated.
 
 Run it like:
-    python data-prep/refresh.py              # all five boroughs -> GeoJSON
+    python data-prep/refresh.py              # all five boroughs
     python data-prep/refresh.py --outlines   # also refresh borough outlines
 """
 
@@ -42,12 +42,15 @@ def main():
 
     for borough in BOROUGHS:
         run("fetch_pluto.py", "--borough", borough)
+    # The map reads the .bin files; the GeoJSON is kept as a readable,
+    # portable copy of the same lots for anything else that wants it.
+    run("export_points.py")
     run("export_geojson.py")
     if args.outlines:
         run("fetch_boroughs.py")
 
     minutes = (time.time() - start) / 60
-    print(f"\nAll done in {minutes:.1f} min. Refreshed GeoJSON is in docs/data/.")
+    print(f"\nAll done in {minutes:.1f} min. Refreshed data is in docs/data/.")
 
 
 if __name__ == "__main__":

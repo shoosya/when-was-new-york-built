@@ -14,11 +14,16 @@ directly, so there's no backend to run.
 1. **`data-prep/fetch_pluto.py`** pulls one borough at a time from NYC's PLUTO open
    dataset, cleans it with pandas (drops lots with no year/coordinates, applies a
    sanity floor of 1625), buckets each lot into a decade, and saves a CSV.
-2. **`data-prep/export_geojson.py`** turns those CSVs into compact GeoJSON files the
-   map can load (`docs/data/<borough>.geojson`).
-3. **`data-prep/fetch_boroughs.py`** downloads and simplifies the five borough
+2. **`data-prep/export_points.py`** turns those CSVs into the compact binary files
+   the map actually loads (`docs/data/<borough>.bin`) — parallel arrays of
+   fixed-width numbers, about 83% smaller than the same lots as GeoJSON. The
+   format is documented at the top of that script.
+3. **`data-prep/export_geojson.py`** writes the same lots as GeoJSON
+   (`docs/data/<borough>.geojson`). The map no longer reads these; they're kept as
+   a portable, human-readable copy of the data.
+4. **`data-prep/fetch_boroughs.py`** downloads and simplifies the five borough
    outlines for the landing-page map (`docs/data/boroughs.geojson`).
-4. **`docs/`** is the static site (served by GitHub Pages):
+5. **`docs/`** is the static site (served by GitHub Pages):
    - `index.html` — landing map; click a borough to open its page.
    - `borough.html` — one borough's lots, colored by decade, with the slider,
      play button, click-for-details popups, and the interactive legend.
@@ -29,7 +34,8 @@ directly, so there's no backend to run.
 when-was-new-york-built/
   data-prep/
     fetch_pluto.py       # pull + clean PLUTO -> data-prep/output/<borough>.csv
-    export_geojson.py    # CSV -> docs/data/<borough>.geojson
+    export_points.py     # CSV -> docs/data/<borough>.bin (what the map loads)
+    export_geojson.py    # CSV -> docs/data/<borough>.geojson (portable copy)
     fetch_boroughs.py    # borough outlines -> docs/data/boroughs.geojson
     output/              # intermediate CSVs (git-ignored, regenerable)
   docs/                  # the static site (GitHub Pages serves from here)
@@ -41,7 +47,7 @@ when-was-new-york-built/
     zoning.js            # plain-language labels for zoning codes
     style.css
     favicon.svg
-    data/                # exported GeoJSON (committed — the site needs it)
+    data/                # exported .bin + .geojson (committed — the site needs it)
   requirements.txt
 ```
 
