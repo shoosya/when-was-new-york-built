@@ -6,7 +6,6 @@
     <title>NYC Building Ages — Explore by borough</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 
-    <!-- Cabin by Impallari Type -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -41,7 +40,7 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Silhouette of New York City's five boroughs beside a dark-red-to-yellow color scale running from before 1900 to the 2020s."
+      content="Silhouette of New York City's five boroughs in coral on a blue field, beside a colour scale running from aqua for buildings from before 1900 to midnight navy for the 2020s."
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="When Was New York Built?" />
@@ -61,8 +60,6 @@
   </head>
   <body>
     <header class="site-header">
-      <!-- alt="" — the title right next to it already says this, so a screen
-           reader announcing the logo too would just be noise. -->
       <img class="site-logo" src="logo.svg" alt="" width="42" height="42" />
       <div>
         <h1>When Was New York Built?</h1>
@@ -72,7 +69,12 @@
       </div>
     </header>
 
-    <div id="map" class="map"></div>
+    <div
+      id="map"
+      class="map"
+      role="region"
+      aria-label="Map of New York City's five boroughs"
+    ></div>
 
     <footer class="site-footer">
       <span class="footer-credits">
@@ -84,7 +86,6 @@
         (26v1) · Built with Leaflet
       </span>
 
-      <!-- One flex item so the two links stay side by side and wrap together. -->
       <span class="footer-author">
         Created by
         <a href="https://github.com/shoosya" target="_blank" rel="noopener"

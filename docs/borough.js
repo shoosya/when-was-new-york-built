@@ -1,11 +1,9 @@
-// Detail page: show one borough's lots as dots colored by decade, with a
-// "rewind" slider that hides buildings newer than the chosen decade.
+// Detail page: one borough's lots as dots colored by decade.
 //
-// The lots live in parallel typed arrays loaded from a .bin file, and a
-// GridLayer paints them onto canvas tiles. The obvious alternative — one
-// L.circleMarker per lot — costs ~870 bytes of heap each, which is ~270 MB for
-// Queens' 312k lots and enough to get the tab killed on a phone. The arrays
-// here come to about 9 bytes per lot.
+// Lots live in parallel typed arrays and a GridLayer paints them onto canvas
+// tiles. One L.circleMarker per lot — the obvious alternative — costs ~870
+// bytes of heap each, ~270 MB for Queens, enough to get the tab killed on a
+// phone. These arrays come to about 9 bytes per lot.
 
 const SLUGS = {
   manhattan: "Manhattan",
@@ -52,6 +50,7 @@ const slider = document.getElementById("slider");
 const statusEl = document.getElementById("status");
 const countEl = document.getElementById("count");
 const playBtn = document.getElementById("play");
+const summaryEl = document.getElementById("map-summary");
 
 // The map has two ways to filter by time, and they take turns:
 //   - the slider shows everything built *up to* a decade (cumulative "rewind")
@@ -67,9 +66,8 @@ fetch(`data/${slug}.bin`)
     alert("Could not load building data.");
   });
 
-// --- Reading the .bin file (layout is documented in data-prep/export_points.py).
-//     Each block is copied out rather than viewed in place, so the blocks don't
-//     have to be aligned and the original buffer can be freed afterwards. ---
+// Layout is documented in data-prep/export_points.py. Blocks are copied out
+// rather than viewed in place, so they don't have to be aligned.
 function build(buffer) {
   const head = new DataView(buffer);
   const magic = String.fromCharCode(...new Uint8Array(buffer, 0, 4));
@@ -100,8 +98,7 @@ function build(buffer) {
   off += zoneLen;
   lots.addrBlob = new Uint8Array(buffer.slice(off, off + addrLen));
 
-  // Project once up front: the tile loop runs per point per tile, and a sin+log
-  // each time would dominate it.
+  // Project once: a sin+log per point per tile would dominate the draw loop.
   lots.n = n;
   lots.wx = new Float64Array(n);
   lots.wy = new Float64Array(n);
@@ -161,11 +158,9 @@ function dataBounds() {
   return L.latLngBounds([wyToLat(y1), wxToLon(x0)], [wyToLat(y0), wxToLon(x1)]);
 }
 
-// --- Spatial index: a flat grid over the borough, so drawing a tile or testing
-//     a tap only visits nearby lots instead of all 312k. Stored as two arrays
-//     (the standard "bucket the items, then prefix-sum the counts" layout):
-//     `order` lists lot indexes grouped by cell, `cellStart` says where each
-//     cell's group begins. ---
+// Flat grid so drawing a tile or testing a tap visits nearby lots, not all
+// 312k. `order` lists lot indexes grouped by cell; `cellStart` where each
+// cell's group begins.
 const GRID = 64;
 const index = { x0: 0, y0: 0, spanX: 1, spanY: 1, cellStart: null, order: null };
 
@@ -206,7 +201,6 @@ function cellIndex(wx, wy) {
   return cellY(wy) * GRID + cellX(wx);
 }
 
-// Call `visit(lotIndex)` for every lot whose cell overlaps the given box.
 function forEachInBox(wx0, wy0, wx1, wy1, visit) {
   const cx0 = cellX(wx0),
     cx1 = cellX(wx1),
@@ -221,12 +215,11 @@ function forEachInBox(wx0, wy0, wx1, wy1, visit) {
   }
 }
 
-// --- Drawing. One canvas per map tile; Leaflet handles positioning, caching
-//     and panning, so a filter change is just redraw(). ---
+// One canvas per map tile; Leaflet handles positioning, caching and panning,
+// so a filter change is just redraw().
 
-// Smaller dots when zoomed out. At city zoom the old fixed 4px radius drew
-// hundreds of thousands of overlapping dots into a few hundred pixels, which is
-// both slow and an unreadable blob.
+// Smaller dots when zoomed out: a fixed 4px radius draws hundreds of thousands
+// of overlapping dots into a few hundred pixels — slow, and an unreadable blob.
 function radiusForZoom(z) {
   if (z >= 16) return 4;
   if (z >= 14) return 3;
@@ -255,8 +248,7 @@ const pointsLayer = new PointsLayer({ zIndex: 2, maxZoom: 19 });
 function drawTile(ctx, coords, tileSize) {
   const scale = Math.pow(2, coords.z);
   const r = radiusForZoom(coords.z);
-  // Reach past the tile edge so dots straddling the seam are drawn on both
-  // sides, otherwise they appear clipped.
+  // Reach past the tile edge, or dots straddling the seam look clipped.
   const pad = (r + 1) / (tileSize * scale);
 
   const wx0 = coords.x / scale - pad;
@@ -276,8 +268,7 @@ function drawTile(ctx, coords, tileSize) {
     pts.push((wx * scale - coords.x) * tileSize, (wy * scale - coords.y) * tileSize);
   });
 
-  // Oldest last, so older buildings draw on top where dots overlap — a more
-  // honest picture of when an area was built up.
+  // Oldest last, so older buildings draw on top where dots overlap.
   const decades = [...byDecade.keys()].sort((a, b) => b - a);
   ctx.globalAlpha = 0.8;
   for (const d of decades) {
@@ -297,18 +288,27 @@ function isDecadeVisible(decade) {
   return decade <= Number(slider.value);
 }
 
-// Repaint the tiles and update the headline count. The count comes from the
-// per-decade totals worked out at load, so it never rescans the lots.
+// The count comes from per-decade totals worked out at load, never a rescan.
 function refresh() {
   let visible = 0;
   for (const [decade, count] of lots.countByDecade) {
     if (isDecadeVisible(decade)) visible += count;
   }
   countEl.textContent = `${visible.toLocaleString()} buildings`;
+  announce(visible);
   pointsLayer.redraw();
 }
 
-// --- Popups: find the nearest visible lot to the tap. ---
+function announce(visible) {
+  const what = activeBand
+    ? `built ${activeBand.label}`
+    : `built up to the ${slider.value}s`;
+  summaryEl.textContent =
+    `${visible.toLocaleString()} of ${lots.n.toLocaleString()} ` +
+    `${SLUGS[slug]} buildings shown, ${what}.`;
+  slider.setAttribute("aria-valuetext", `${slider.value}s`);
+}
+
 map.on("click", (e) => {
   if (!lots.n) return;
   const scale = Math.pow(2, map.getZoom());
@@ -336,16 +336,16 @@ map.on("click", (e) => {
   }
 });
 
-// A coral ring around the building you tapped. It's a single vector marker
-// rather than a change to the tile drawing: one object costs nothing, and
-// repainting every tile to move one highlight would not be worth it.
+// A single vector marker, not a change to the tile drawing: repainting every
+// tile to move one highlight isn't worth it.
 let selectedRing = null;
 
 function highlight(latlng) {
   if (selectedRing) map.removeLayer(selectedRing);
   selectedRing = L.circleMarker(latlng, {
     radius: 9,
-    color: "#f6575e",
+    // Darker than --accent: plain coral is 2.91:1 on the basemap, under 3:1.
+    color: "#ea4550",
     weight: 3,
     opacity: 1,
     fill: false,
@@ -402,8 +402,7 @@ function togglePlay() {
   // Play animates the cumulative timeline, so drop any isolated legend band.
   activeBand = null;
   updateLegendUI();
-  // Pressing play at the end means "replay" — rewind first. Only ever happens
-  // on an explicit press; playback stops at the newest decade, never loops.
+  // Pressing play at the end means "replay" — rewind first. Never loops.
   if (Number(slider.value) >= Number(slider.max)) {
     slider.value = slider.min;
   }
@@ -434,8 +433,7 @@ function stopPlay() {
   playBtn.textContent = "▶";
 }
 
-// --- Legend: a swatch per time-period band, plus "All periods". The clickable
-//     list on desktop and the dropdown on narrow screens drive the same state. ---
+// The clickable list on desktop and the dropdown on mobile drive one state.
 const legendRows = []; // { band, row } for each period band
 let allRow = null; // the "All periods" reset row
 let legendSelect = null; // the mobile <select>
@@ -444,24 +442,30 @@ function buildLegend() {
   const el = document.getElementById("legend");
   el.innerHTML = '<div class="legend-title">Period built</div>';
 
+  // <button>, not a styled div: tab order, Enter/Space, and aria-pressed state.
+  const makeRow = (inner, onPress) => {
+    const row = document.createElement("button");
+    row.type = "button";
+    row.className = "legend-row";
+    row.setAttribute("aria-pressed", "false");
+    row.innerHTML = inner;
+    row.addEventListener("click", onPress);
+    el.appendChild(row);
+    return row;
+  };
+
   // "All periods" clears the filter; its swatch previews the whole ramp.
-  allRow = document.createElement("div");
-  allRow.className = "legend-row";
-  allRow.innerHTML = '<span class="swatch swatch-all"></span>All periods';
-  allRow.addEventListener("click", () => {
+  allRow = makeRow('<span class="swatch swatch-all"></span>All periods', () => {
     stopPlay();
     setActiveBand(null);
   });
-  el.appendChild(allRow);
 
   LEGEND_BANDS.forEach((band) => {
-    const row = document.createElement("div");
-    row.className = "legend-row";
-    row.innerHTML =
+    const row = makeRow(
       `<span class="swatch" style="background:${colorForDecade(band.decade)}"></span>` +
-      band.label;
-    row.addEventListener("click", () => toggleBand(band));
-    el.appendChild(row);
+        band.label,
+      () => toggleBand(band),
+    );
     legendRows.push({ band, row });
   });
 
@@ -499,12 +503,13 @@ function setActiveBand(band) {
   refresh();
 }
 
-// Keep both legend UIs in step with the current filter.
 function updateLegendUI() {
-  legendRows.forEach(({ band, row }) => {
-    row.classList.toggle("active", band === activeBand);
-  });
-  if (allRow) allRow.classList.toggle("active", activeBand === null);
+  const mark = (row, on) => {
+    row.classList.toggle("active", on);
+    row.setAttribute("aria-pressed", String(on));
+  };
+  legendRows.forEach(({ band, row }) => mark(row, band === activeBand));
+  if (allRow) mark(allRow, activeBand === null);
   if (legendSelect) {
     legendSelect.value = activeBand ? String(LEGEND_BANDS.indexOf(activeBand)) : "";
   }

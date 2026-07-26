@@ -17,11 +17,9 @@ const DECADE_MIN = 1880;
 const DECADE_MAX = 2020;
 
 function colorForDecade(decade) {
-  // Position this decade on the 0..1 ramp, clamped to the ends.
   let t = (decade - DECADE_MIN) / (DECADE_MAX - DECADE_MIN);
   t = Math.max(0, Math.min(1, t));
 
-  // Find the two anchors t sits between, then blend them by how far along it is.
   for (let i = 1; i < COLOR_STOPS.length; i++) {
     const [t0, c0] = COLOR_STOPS[i - 1];
     const [t1, c1] = COLOR_STOPS[i];

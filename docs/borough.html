@@ -6,7 +6,6 @@
     <title>NYC Building Ages</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 
-    <!-- Cabin by Impallari Type -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -21,9 +20,8 @@
       data-website-id="eb8b3ced-1390-46e0-b9a3-fbae9fa82bf5"
     ></script>
 
-    <!-- Link previews. Generic on purpose: borough.js sets the real title from
-         ?borough=, which scrapers never run. og:url and canonical are omitted so
-         every borough's link doesn't collapse to one URL. -->
+    <!-- Generic on purpose: scrapers never run the JS that sets the real title.
+         og:url and canonical are omitted so borough links don't collapse to one. -->
     <meta
       name="description"
       content="Explore a New York City borough building by building, colored by the decade each one went up."
@@ -41,7 +39,7 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Silhouette of New York City's five boroughs beside a dark-red-to-yellow color scale running from before 1900 to the 2020s."
+      content="Silhouette of New York City's five boroughs in coral on a blue field, beside a colour scale running from aqua for buildings from before 1900 to midnight navy for the 2020s."
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="When Was New York Built?" />
@@ -66,9 +64,16 @@
       <span id="count" class="count"></span>
     </header>
 
-    <div id="map" class="map"></div>
+    <div
+      id="map"
+      class="map"
+      role="region"
+      aria-label="Map of buildings, colored by the decade they were built"
+    ></div>
 
-    <!-- Decade "rewind" control -->
+    <!-- The map is canvas; this carries the same figures as text. -->
+    <p id="map-summary" class="visually-hidden" role="status"></p>
+
     <div class="controls">
       <button
         id="play"
@@ -78,14 +83,18 @@
       >
         ▶
       </button>
-      <input id="slider" class="slider" type="range" step="10" />
+      <input
+        id="slider"
+        class="slider"
+        type="range"
+        step="10"
+        aria-label="Show buildings built up to this decade"
+      />
       <div id="status" class="slider-label">Showing all buildings</div>
     </div>
 
-    <!-- Color legend + period filter (list on desktop) -->
     <div id="legend" class="legend"></div>
 
-    <!-- Same period filter as a dropdown, shown only on narrow screens -->
     <select
       id="legend-select"
       class="legend-select"

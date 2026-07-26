@@ -21,7 +21,6 @@ from pathlib import Path
 
 import pandas as pd
 
-# Where Stage 1 put the cleaned CSVs, and where the map expects its data.
 IN_DIR = Path(__file__).parent / "output"
 OUT_DIR = Path(__file__).parent.parent / "docs" / "data"
 
@@ -77,8 +76,7 @@ def export_csv(csv_path):
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     out_path = OUT_DIR / f"{name}.geojson"
     with open(out_path, "w") as f:
-        # No indentation / spaces after separators = smallest file. These
-        # are machine-read, not hand-edited, so compactness wins.
+        # Machine-read, not hand-edited, so compactness wins over readability.
         json.dump(collection, f, separators=(",", ":"))
 
     size_mb = out_path.stat().st_size / 1_000_000

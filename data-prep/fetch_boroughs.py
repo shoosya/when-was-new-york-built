@@ -63,8 +63,6 @@ def main():
     for feat in raw["features"]:
         name = feat["properties"]["boroname"]
 
-        # shape() reads the GeoJSON geometry into a Shapely object we can
-        # simplify; mapping() converts it back to a GeoJSON dict.
         geom = shape(feat["geometry"])
         simplified = geom.simplify(SIMPLIFY_TOLERANCE, preserve_topology=True)
         geom_dict = round_coords(mapping(simplified), COORD_PRECISION)

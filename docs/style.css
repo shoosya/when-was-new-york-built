@@ -63,16 +63,15 @@ a {
 }
 .site-header p {
   margin: 4px 0 0;
-  /* Muted against the blue rather than the page, so it recedes without the
-     grey going muddy. */
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(255, 255, 255, 0.92);
   font-size: 0.9rem;
 }
 
 .detail-header {
   display: flex;
   align-items: center;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 4px 16px;
 }
 .detail-header h1 {
   font-size: 1.2rem;
@@ -82,13 +81,18 @@ a {
   font-size: 0.9rem;
   white-space: nowrap;
   color: var(--brand-ink);
+  /* 24px minimum tap target. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
 }
 .back:hover {
   text-decoration: underline;
 }
 .count {
   margin-left: auto;
-  color: rgba(255, 255, 255, 0.78);
+  min-width: 0;
+  color: rgba(255, 255, 255, 0.92);
   font-size: 0.9rem;
   white-space: nowrap;
 }
@@ -98,21 +102,23 @@ a {
   flex: 1;
   width: 100%;
 }
-/* borough shapes on the landing page invite a click */
 .map path.leaflet-interactive {
   cursor: pointer;
 }
-/* Clicking a shape focuses it, and browsers outline the SVG's bounding box —
-   the brief "blue square". */
-.leaflet-interactive:focus {
+/* Hide the click-focus ring (the "blue square"), keep it for keyboard. */
+.leaflet-interactive:focus:not(:focus-visible) {
   outline: none;
+}
+.leaflet-interactive:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* --- Footer --- */
 .site-footer {
   padding: 8px 20px;
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(255, 255, 255, 0.92);
   background: var(--brand);
   border-top: 1px solid var(--brand-edge);
   display: flex;
@@ -121,14 +127,12 @@ a {
   justify-content: space-between;
   gap: 6px 16px;
 }
-/* Wrappers, not decoration: without them each <a> becomes its own flex item and
-   the two groups break apart. */
+/* Without these each <a> becomes its own flex item and the groups break apart. */
 .footer-credits,
 .footer-author {
   min-width: 0;
 }
-/* On the blue, coral drops to ~2.4:1 — too low to read. White carries the
-   links instead, with the underline doing the work of marking them. */
+/* Coral is ~2.4:1 on the blue — too low. White plus the underline instead. */
 .site-footer a {
   color: var(--brand-ink);
 }
@@ -209,10 +213,17 @@ a {
   align-items: center;
   gap: 8px;
   margin: 1px -4px;
-  padding: 3px 6px;
+  padding: 5px 6px;
   border-radius: 5px;
   cursor: pointer;
   user-select: none;
+  /* It's a <button>: drop the UA chrome and inherit the panel's type. */
+  width: calc(100% + 8px);
+  background: none;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
 }
 .legend-row:hover {
   background: rgba(0, 0, 0, 0.06);
@@ -233,7 +244,7 @@ a {
   flex: none;
   border-radius: 3px;
   display: inline-block;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.45);
 }
 
 .swatch-all {
@@ -246,7 +257,6 @@ a {
   background-origin: border-box;
 }
 
-/* Mobile period-filter dropdown; the media query below swaps it for the list. */
 .legend-select {
   display: none;
   position: fixed;
@@ -263,14 +273,12 @@ a {
   box-shadow: var(--shadow);
 }
 
-/* Small muted label inside map popups (e.g. "Zoning:"). Popups always sit on a
-   white background, so this uses a fixed gray rather than the theme variable. */
+/* Popups are always on white, so a fixed gray rather than the theme variable. */
 .popup-label {
   color: #666;
 }
 
-/* --- Narrow screens: the player doesn't fit and the legend list covers too
-   much map, so hide both and swap in the dropdown. Desktop is unchanged. --- */
+/* Narrow screens: the player doesn't fit and the legend covers too much map. */
 @media (max-width: 640px) {
   .controls {
     display: none;
@@ -283,4 +291,17 @@ a {
     /* Clear the attribution bar, which wraps to two lines at phone widths. */
     bottom: 44px;
   }
+}
+
+/* Off-screen but still announced. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }

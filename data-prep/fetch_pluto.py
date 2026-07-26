@@ -27,10 +27,8 @@ ENDPOINT = "https://data.cityofnewyork.us/resource/64uk-42ks.json"
 # We page through the data in chunks of this size using $limit/$offset.
 PAGE_SIZE = 50_000
 
-# Only pull the fields we actually use — smaller, faster responses than
-# grabbing all 70+ columns. `latitude`/`longitude` give us a point per lot;
-# `the_geom` (the full polygon) is available too but much heavier, so we
-# start with points and can upgrade later.
+# Only the fields we use — far smaller responses than all 70+ columns.
+# `the_geom` (the full polygon) is available but much heavier than points.
 FIELDS = [
     "bbl",         # unique tax-lot ID
     "borough",     # MN / BX / BK / QN / SI
@@ -44,10 +42,8 @@ FIELDS = [
     "longitude",
 ]
 
-# Where the cleaned CSV lands.
 OUT_DIR = Path(__file__).parent / "output"
 
-# Friendly names for the CSV filename / log messages.
 BOROUGH_NAMES = {
     "MN": "manhattan",
     "BX": "bronx",
@@ -117,7 +113,6 @@ def clean(rows):
     print(f"  kept {len(df):,} of {before:,} rows after cleaning")
 
     # Bucket the year into its decade: 1923 -> 1920, 2005 -> 2000.
-    # Integer-divide by 10, then multiply back by 10.
     df["decade"] = (df["yearbuilt"] // 10 * 10).astype(int)
 
     return df
@@ -146,7 +141,6 @@ def main():
     df.to_csv(out_path, index=False)
     print(f"Saved {len(df):,} rows -> {out_path}")
 
-    # A quick peek so you can sanity-check the result.
     print("\nLots per decade:")
     print(df["decade"].value_counts().sort_index().to_string())
 

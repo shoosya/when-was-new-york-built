@@ -6,7 +6,6 @@
 //   suffixes & dashes = fine-grained variants we don't need for a popup.
 // So rather than list every code, we read those two parts and describe them.
 
-// A short description for each use-letter + density-number combination.
 const ZONING_DENSITY = {
   R: {
     1: "single-family houses",
@@ -40,8 +39,7 @@ const ZONING_DENSITY = {
 // Fallback wording if we know the use letter but not the density number.
 const ZONING_USE = { R: "residential", C: "commercial", M: "manufacturing" };
 
-// Turn a raw code like "R7A" into "R7A — mid-rise apartments".
-// Returns just the code if we can't interpret it, and a friendly note for blanks.
+// "R7A" -> "R7A — mid-rise apartments"; the raw code if we can't interpret it.
 function zoningLabel(code) {
   if (!code) return "zoning n/a";
 
