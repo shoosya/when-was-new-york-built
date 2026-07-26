@@ -28,7 +28,7 @@ const map = L.map("map");
 L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
   // This page has no footer, so the credits ride along in the attribution.
   attribution:
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> · Data: <a href="https://www.nyc.gov/content/planning/pages/resources?search=pluto#datasets">NYC PLUTO</a> (26v1) · Map icon by <a href="https://www.flaticon.com/free-icons/map" title="map icons">Magnific - Flaticon</a>',
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> · Data: <a href="https://www.nyc.gov/content/planning/pages/resources?search=pluto#datasets">NYC PLUTO</a> (26v1)',
   subdomains: "abcd",
   maxZoom: 19,
 }).addTo(map);
@@ -330,10 +330,33 @@ map.on("click", (e) => {
   });
 
   if (best >= 0) {
-    L.popup()
-      .setLatLng([wyToLat(lots.wy[best]), wxToLon(lots.wx[best])])
-      .setContent(popupHtml(best))
-      .openOn(map);
+    const at = [wyToLat(lots.wy[best]), wxToLon(lots.wx[best])];
+    highlight(at);
+    L.popup().setLatLng(at).setContent(popupHtml(best)).openOn(map);
+  }
+});
+
+// A coral ring around the building you tapped. It's a single vector marker
+// rather than a change to the tile drawing: one object costs nothing, and
+// repainting every tile to move one highlight would not be worth it.
+let selectedRing = null;
+
+function highlight(latlng) {
+  if (selectedRing) map.removeLayer(selectedRing);
+  selectedRing = L.circleMarker(latlng, {
+    radius: 9,
+    color: "#f6575e",
+    weight: 3,
+    opacity: 1,
+    fill: false,
+    interactive: false, // never swallow the next click meant for the map
+  }).addTo(map);
+}
+
+map.on("popupclose", () => {
+  if (selectedRing) {
+    map.removeLayer(selectedRing);
+    selectedRing = null;
   }
 });
 

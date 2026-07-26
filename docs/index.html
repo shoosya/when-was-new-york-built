@@ -6,6 +6,14 @@
     <title>NYC Building Ages — Explore by borough</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 
+    <!-- Cabin by Impallari Type -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Analytics -->
     <script
       defer
@@ -53,8 +61,15 @@
   </head>
   <body>
     <header class="site-header">
-      <h1>When Was New York Built?</h1>
-      <p>Pick a borough to explore its buildings by the decade they went up.</p>
+      <!-- alt="" — the title right next to it already says this, so a screen
+           reader announcing the logo too would just be noise. -->
+      <img class="site-logo" src="logo.svg" alt="" width="42" height="42" />
+      <div>
+        <h1>When Was New York Built?</h1>
+        <p>
+          Pick a borough to explore its buildings by the decade they went up.
+        </p>
+      </div>
     </header>
 
     <div id="map" class="map"></div>
@@ -66,10 +81,7 @@
           href="https://www.nyc.gov/content/planning/pages/resources?search=pluto#datasets"
           >NYC PLUTO</a
         >
-        (26v1) · Built with Leaflet ·
-        <a href="https://www.flaticon.com/free-icons/map" title="map icons"
-          >Map icons created by Magnific - Flaticon</a
-        >
+        (26v1) · Built with Leaflet
       </span>
 
       <!-- One flex item so the two links stay side by side and wrap together. -->

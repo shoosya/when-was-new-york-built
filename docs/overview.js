@@ -13,9 +13,9 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
 }).addTo(map);
 
 const baseStyle = {
-  color: "#b3123c",
+  color: "#156eac",
   weight: 2,
-  fillColor: "#f6531f",
+  fillColor: "#f6575e",
   fillOpacity: 0.35,
 };
 const hoverStyle = { fillOpacity: 0.6, weight: 3 };

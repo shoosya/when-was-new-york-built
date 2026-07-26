@@ -1,24 +1,18 @@
 // Shared decade color scale, used by both the legend and the map dots.
 //
-// It's a *sequential* ramp: one smooth path from dark red (oldest buildings)
-// to bright yellow (newest). Lightness climbs steadily toward the present, so
-// "older = darker/redder, newer = lighter/yellower" reads at a glance — even
-// for most colorblind viewers, since they can still tell dark from light.
+// It's a *sequential* ramp: one smooth path from aqua (oldest buildings) to
+// midnight navy (newest). Lightness falls steadily toward the present, so
+// "older = lighter, newer = darker" reads at a glance — even for most
+// colorblind viewers, since they can still tell dark from light.
 
-// Anchor colors, oldest -> newest, as [position 0..1, [r, g, b]].
-// We linearly blend between neighboring anchors to get every decade's color.
 const COLOR_STOPS = [
-  [0.0, [128, 0, 38]],   // dark red   (oldest)
-  [0.25, [215, 25, 28]], // red
-  [0.5, [240, 124, 30]], // orange
-  [0.75, [253, 183, 49]],// amber
-  [1.0, [255, 229, 0]],  // bright yellow (newest)
+  [0.0, [80, 183, 183]], // aqua (oldest)
+  [0.25, [3, 144, 164]],
+  [0.5, [0, 102, 139]], // teal-blue (base)
+  [0.75, [0, 63, 109]],
+  [1.0, [0, 29, 72]], // midnight navy (newest)
 ];
 
-// Anchor the ramp to this range. Almost every NYC lot is 1880 or later, so
-// starting here spreads the colors across the years that actually have data
-// instead of squashing them all into the yellow end. Anything older just
-// gets the darkest red.
 const DECADE_MIN = 1880;
 const DECADE_MAX = 2020;
 
@@ -39,13 +33,9 @@ function colorForDecade(decade) {
       return `rgb(${r},${g},${b})`;
     }
   }
-  return "rgb(255,229,0)";
+  return "rgb(0,29,72)";
 }
 
-// The legend's time-period bands. Each is a clickable filter that isolates one
-// period, so together they cover every decade with no gaps:
-//   min / max  — the decade range this band matches (inclusive)
-//   decade     — the decade used to pick the band's swatch color
 const LEGEND_BANDS = [
   { label: "Before 1900", min: 0, max: 1890, decade: 1880 },
   { label: "1900–1919", min: 1900, max: 1910, decade: 1900 },
