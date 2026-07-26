@@ -23,10 +23,7 @@ document.getElementById("borough-title").textContent = SLUGS[slug];
 document.title = `NYC Building Ages — ${SLUGS[slug]}`;
 
 const map = L.map("map");
-// Leaflet's own "Leaflet" prefix is optional; OSM and CARTO's credits are not.
-map.attributionControl.setPrefix(false);
 L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-  // No footer on this page, so credits ride along in the attribution chip.
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> · Data: <a href="https://www.nyc.gov/content/planning/pages/resources?search=pluto#datasets">NYC PLUTO</a> (26v1)',
   subdomains: "abcd",
@@ -164,7 +161,14 @@ function dataBounds() {
 // 312k. `order` lists lot indexes grouped by cell; `cellStart` where each
 // cell's group begins.
 const GRID = 64;
-const index = { x0: 0, y0: 0, spanX: 1, spanY: 1, cellStart: null, order: null };
+const index = {
+  x0: 0,
+  y0: 0,
+  spanX: 1,
+  spanY: 1,
+  cellStart: null,
+  order: null,
+};
 
 function buildIndex() {
   const b = dataBounds();
@@ -267,7 +271,10 @@ function drawTile(ctx, coords, tileSize) {
     if (!isDecadeVisible(lots.decade[i])) return;
     let pts = byDecade.get(lots.decade[i]);
     if (!pts) byDecade.set(lots.decade[i], (pts = []));
-    pts.push((wx * scale - coords.x) * tileSize, (wy * scale - coords.y) * tileSize);
+    pts.push(
+      (wx * scale - coords.x) * tileSize,
+      (wy * scale - coords.y) * tileSize,
+    );
   });
 
   // Oldest last, so older buildings draw on top where dots overlap.
@@ -484,7 +491,9 @@ function buildLegendSelect() {
   legendSelect = document.getElementById("legend-select");
   legendSelect.innerHTML =
     '<option value="">All periods</option>' +
-    LEGEND_BANDS.map((band, i) => `<option value="${i}">${band.label}</option>`).join("");
+    LEGEND_BANDS.map(
+      (band, i) => `<option value="${i}">${band.label}</option>`,
+    ).join("");
   legendSelect.addEventListener("change", () => {
     stopPlay();
     const value = legendSelect.value;
@@ -513,6 +522,8 @@ function updateLegendUI() {
   legendRows.forEach(({ band, row }) => mark(row, band === activeBand));
   if (allRow) mark(allRow, activeBand === null);
   if (legendSelect) {
-    legendSelect.value = activeBand ? String(LEGEND_BANDS.indexOf(activeBand)) : "";
+    legendSelect.value = activeBand
+      ? String(LEGEND_BANDS.indexOf(activeBand))
+      : "";
   }
 }
