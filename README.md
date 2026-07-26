@@ -1,5 +1,7 @@
 # When Was New York Built?
 
+**[whenwasbuilt.nyc](https://whenwasbuilt.nyc)**
+
 An interactive map of New York City showing **when each building was constructed**.
 Pick a borough, then explore its ~40k–310k tax lots colored by the decade they went
 up — with a "rewind" slider to watch the city grow and a clickable legend to isolate
@@ -91,6 +93,8 @@ one at a time if you only need one borough:
 2. In the repo's **Settings → Pages**, set the source to the **`main` branch, `/docs`
    folder**.
 3. The site goes live at `https://<username>.github.io/when-was-new-york-built/`.
+   This one is served from the custom domain in `docs/CNAME` instead —
+   <https://whenwasbuilt.nyc>.
 
 > Note: the Brooklyn and Queens GeoJSON files are ~55–66 MB. GitHub accepts files up
 > to 100 MB but warns above 50 MB. If that becomes a problem, the exporter could be
