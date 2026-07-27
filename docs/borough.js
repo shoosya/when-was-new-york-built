@@ -127,6 +127,7 @@ function build(buffer) {
   // Dragging the slider hands control back to the cumulative view.
   slider.addEventListener("input", () => setActiveBand(null));
   playBtn.addEventListener("click", togglePlay);
+  initSearch();
 }
 
 function lonToWX(lon) {
@@ -526,4 +527,201 @@ function updateLegendUI() {
       ? String(LEGEND_BANDS.indexOf(activeBand))
       : "";
   }
+}
+
+// --- Address search -------------------------------------------------------
+// Scans the raw address blob rather than decoding 300k strings: the bytes are
+// already contiguous, so a match is a byte compare and a binary search on
+// addrOff. Queens, the worst case, takes ~2ms — fast enough to redo per
+// keystroke with no index to build or keep in memory.
+
+const MAX_RESULTS = 8;
+const MAX_NEEDLES = 4; // bounds the work when a query expands several ways
+const searchInput = document.getElementById("search-input");
+const searchList = document.getElementById("search-results");
+let searchHits = [];
+let activeHit = -1;
+
+const upper = (b) => (b >= 97 && b <= 122 ? b - 32 : b);
+
+// Offsets of every occurrence of `needle` (already upper-cased) in the blob.
+function scanBlob(needle, limit, out) {
+  const blob = lots.addrBlob;
+  const last = blob.length - needle.length;
+  outer: for (let p = 0; p <= last; p++) {
+    if (upper(blob[p]) !== needle[0]) continue;
+    for (let k = 1; k < needle.length; k++) {
+      if (upper(blob[p + k]) !== needle[k]) continue outer;
+    }
+    out.push(p);
+    if (out.length >= limit) return;
+  }
+}
+
+// addrOff is ascending, so the lot owning a byte is the last entry <= it.
+function lotAtOffset(off) {
+  let lo = 0,
+    hi = lots.n - 1;
+  while (lo < hi) {
+    const mid = (lo + hi + 1) >> 1;
+    if (lots.addrOff[mid] <= off) lo = mid;
+    else hi = mid - 1;
+  }
+  return lo;
+}
+
+// PLUTO is not consistent about these — 273k addresses end in "AVENUE" but
+// 1,665 end in "AVE", 15,643 in "BOULEVARD" and 5,300 in "BLVD" — so the swap
+// has to run both ways, not just abbreviation to full word.
+const STREET_TYPES = [
+  ["AVENUE", "AVE", "AV"],
+  ["STREET", "ST", "STR"],
+  ["ROAD", "RD"],
+  ["PLACE", "PL"],
+  ["BOULEVARD", "BLVD"],
+  ["DRIVE", "DR"],
+  ["COURT", "CT"],
+  ["LANE", "LN"],
+  ["PARKWAY", "PKWY"],
+  ["TERRACE", "TER"],
+  ["EXPRESSWAY", "EXPY"],
+  ["HIGHWAY", "HWY"],
+  ["PLAZA", "PLZ"],
+  ["SQUARE", "SQ"],
+  ["CIRCLE", "CIR"],
+];
+
+// Swap the right-most street type only. It is usually the last word, but
+// Brooklyn's lettered avenues put it second to last ("618 AVENUE H"), and
+// stopping at the first match from the right keeps "ST NICHOLAS AVENUE" from
+// having its Saint rewritten as Street.
+function streetVariants(text) {
+  const parts = text.replace(/\.$/, "").split(" ");
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const group = STREET_TYPES.find((g) => g.includes(parts[i]));
+    if (!group) continue;
+    return group
+      .filter((w) => w !== parts[i])
+      .map((w) => [...parts.slice(0, i), w, ...parts.slice(i + 1)].join(" "));
+  }
+  return [];
+}
+
+function searchAddresses(query) {
+  const text = query.trim().replace(/\s+/g, " ").toUpperCase();
+  if (text.length < 2) return [];
+
+  const variants = [text];
+  // A variant containing what was typed adds nothing — the substring scan for
+  // "MYRTLE AVE" already finds "MYRTLE AVENUE". Only the reverse needs a pass.
+  for (const v of streetVariants(text)) if (!v.includes(text)) variants.push(v);
+
+  // Queens house numbers are hyphenated ("150-25 18 AVENUE"), so let someone
+  // who types the digits straight through still find them.
+  const digits = text.match(/^(\d{4,})(\D.*)?$/);
+  if (digits) {
+    const [, num, rest = ""] = digits;
+    for (const cut of [2, 3]) {
+      if (num.length > cut) {
+        variants.push(`${num.slice(0, cut)}-${num.slice(cut)}${rest}`);
+      }
+    }
+  }
+
+  const enc = new TextEncoder();
+  const offsets = [];
+  for (const v of variants.slice(0, MAX_NEEDLES)) {
+    scanBlob(enc.encode(v), MAX_RESULTS * 4, offsets);
+  }
+
+  const seen = new Set();
+  const hits = [];
+  for (const off of offsets) {
+    const i = lotAtOffset(off);
+    if (seen.has(i)) continue;
+    seen.add(i);
+    hits.push({ i, atStart: lots.addrOff[i] === off, addr: addressOf(i) });
+  }
+  // Matches that begin an address beat ones buried mid-string, then shorter
+  // addresses first so "100 MAIN ST" outranks "100 MAIN ST EXTENSION".
+  hits.sort(
+    (a, b) => b.atStart - a.atStart || a.addr.length - b.addr.length,
+  );
+  return hits.slice(0, MAX_RESULTS);
+}
+
+function renderResults() {
+  searchList.innerHTML = "";
+  searchHits.forEach((hit, k) => {
+    const li = document.createElement("li");
+    li.className = "search-option";
+    li.id = `search-opt-${k}`;
+    li.setAttribute("role", "option");
+    li.setAttribute("aria-selected", String(k === activeHit));
+    li.textContent = hit.addr;
+    li.addEventListener("mousedown", (e) => {
+      e.preventDefault(); // keep focus so blur doesn't close the list first
+      choose(k);
+    });
+    searchList.appendChild(li);
+  });
+  const open = searchHits.length > 0;
+  searchList.hidden = !open;
+  searchInput.setAttribute("aria-expanded", String(open));
+  if (activeHit >= 0) {
+    searchInput.setAttribute("aria-activedescendant", `search-opt-${activeHit}`);
+  } else {
+    searchInput.removeAttribute("aria-activedescendant");
+  }
+}
+
+function closeResults() {
+  searchHits = [];
+  activeHit = -1;
+  renderResults();
+}
+
+function choose(k) {
+  const hit = searchHits[k];
+  if (!hit) return;
+  const { i } = hit;
+  // Flying to a building the current filter hides would land on empty map.
+  if (!isDecadeVisible(lots.decade[i])) {
+    slider.value = slider.max;
+    setActiveBand(null);
+  }
+  const at = [wyToLat(lots.wy[i]), wxToLon(lots.wx[i])];
+  map.setView(at, Math.max(map.getZoom(), 17));
+  highlight(at);
+  L.popup().setLatLng(at).setContent(popupHtml(i)).openOn(map);
+  searchInput.value = hit.addr;
+  closeResults();
+}
+
+function initSearch() {
+  searchInput.addEventListener("input", () => {
+    stopPlay();
+    searchHits = searchAddresses(searchInput.value);
+    activeHit = -1;
+    renderResults();
+  });
+
+  searchInput.addEventListener("keydown", (e) => {
+    if (!searchHits.length) return;
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      const step = e.key === "ArrowDown" ? 1 : -1;
+      activeHit =
+        (activeHit + step + searchHits.length + 1) % (searchHits.length + 1);
+      if (activeHit === searchHits.length) activeHit = -1;
+      renderResults();
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      choose(activeHit >= 0 ? activeHit : 0);
+    } else if (e.key === "Escape") {
+      closeResults();
+    }
+  });
+
+  searchInput.addEventListener("blur", closeResults);
 }

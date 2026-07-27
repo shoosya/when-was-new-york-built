@@ -61,6 +61,29 @@
     <header class="site-header detail-header">
       <a class="back" href="index.html">← All boroughs</a>
       <h1 id="borough-title">Loading…</h1>
+
+      <div class="search">
+        <input
+          id="search-input"
+          class="search-input"
+          type="text"
+          role="combobox"
+          aria-expanded="false"
+          aria-controls="search-results"
+          aria-autocomplete="list"
+          aria-label="Search this borough by address"
+          placeholder="Search this borough…"
+          autocomplete="off"
+        />
+        <ul
+          id="search-results"
+          class="search-results"
+          role="listbox"
+          aria-label="Matching addresses"
+          hidden
+        ></ul>
+      </div>
+
       <span id="count" class="count"></span>
     </header>
 

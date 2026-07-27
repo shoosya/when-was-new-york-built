@@ -315,3 +315,54 @@ a {
   border-radius: 8px 0 0 0;
   background: rgba(255, 255, 255, 0.82);
 }
+
+/* --- Address search --- */
+.search {
+  position: relative;
+  flex: 1 1 200px;
+  max-width: 300px;
+  min-width: 0;
+}
+.search-input {
+  width: 100%;
+  padding: 5px 10px;
+  min-height: 28px;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--brand-edge);
+  border-radius: 8px;
+}
+.search-input::placeholder {
+  color: var(--muted);
+}
+/* Above the legend and controls, which sit at 1000. */
+.search-results {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 1100;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+.search-option {
+  padding: 6px 8px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.search-option:hover,
+.search-option[aria-selected="true"] {
+  background: rgba(0, 0, 0, 0.07);
+}
